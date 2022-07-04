@@ -1,0 +1,100 @@
+version: "3"
+services:
+  auth-service:
+    build:
+      context: "."
+      dockerfile: "./auth-service/Dockerfile"
+    depends_on:
+      - auth-service-db
+    ports:
+      - "7100:7100"
+    volumes:
+      - ./auth-service:/opt/app
+  auth-service-db:
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+    image: postgres:14.4-alpine
+    ports:
+      - "7200:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data
+  product-service:
+    build:
+      context: "."
+      dockerfile: "./product-service/Dockerfile"
+    depends_on:
+      - product-service-db
+    ports:
+      - "7101:7101"
+    volumes:
+      - ./product-service:/opt/app
+  product-service-db:
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+    image: postgres:14.4-alpine
+    ports:
+      - "7201:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data
+  order-service:
+    build:
+      context: "."
+      dockerfile: "./order-service/Dockerfile"
+    depends_on:
+      - order-service-db
+    ports:
+      - "7102:7102"
+    volumes:
+      - ./order-service:/opt/app
+  order-service-db:
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+    image: postgres:14.4-alpine
+    ports:
+      - "7202:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data
+  cart-service:
+    build:
+      context: "."
+      dockerfile: "./cart-service/Dockerfile"
+    depends_on:
+      - cart-service-db
+    ports:
+      - "7103:7103"
+    volumes:
+      - ./cart-service:/opt/app
+  cart-service-db:
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+    image: postgres:14.4-alpine
+    ports:
+      - "7203:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+        - RABBITMQ_DEFAULT_USER=myuser
+        - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+        # AMQP protocol port
+        - '5672:5672'
+        # HTTP management UI
+        - '15672:15672'
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+volumes:
+  db:
+    driver: local
