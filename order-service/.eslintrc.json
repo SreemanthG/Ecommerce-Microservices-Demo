@@ -16,6 +16,8 @@
     ],
     "rules": {
         "linebreak-style" : ["error", "windows"],
-        "no-console": "off"
+        "no-console": "off",
+        "import/no-unresolved": 0,
+        "import/extensions": 0
     }
 }
